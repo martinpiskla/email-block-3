@@ -8,23 +8,23 @@ from framework.config_loader import get_config_value
 
 def resolve_dynamic_variable(full_key: str, context: dict) -> str:
     """Resolves $Env.XXX, $Config.XXX, or $Var.XXX variables."""
-    if full_key.startswith("Env."):
-        return get_env_variable(full_key[4:])
-    elif full_key.startswith("Config."):
-        return get_config_value(full_key[7:])
-    elif full_key.startswith("Var."):
-        key = full_key[4:]
+    if full_key.startswith("$Env."):
+        return get_env_variable(full_key[5:])
+    elif full_key.startswith("$Config."):
+        return get_config_value(full_key[8:])
+    elif full_key.startswith("$Var."):
+        key = full_key[5:]
         if key not in context:
             raise ValueError(f"$Var.{key} not found in context.")
         return context[key]
     else:
         raise ValueError(f"Unknown variable source: {full_key}")
 
-@given(parsers.re(r"I print \$(?P<var_type>Env|Config|Var)\.(?P<key>\w+) variable content"))
-@when(parsers.re(r"I print \$(?P<var_type>Env|Config|Var)\.(?P<key>\w+) variable content"))
-@then(parsers.re(r"I print \$(?P<var_type>Env|Config|Var)\.(?P<key>\w+) variable content"))
+@given(parsers.re(r"I print (?P<var_type>\$Env|\$Config|\$Var)(?P<key>\.\w+) variable content"))
+@when(parsers.re(r"I print (?P<var_type>\$Env|\$Config|\$Var)(?P<key>\.\w+) variable content"))
+@then(parsers.re(r"I print (?P<var_type>\$Env|\$Config|\$Var)(?P<key>\.\w+) variable content"))
 def print_variable(var_type, key, context):
-    full_key = f"{var_type}.{key}"
+    full_key = f"{var_type}{key}"
     value = resolve_dynamic_variable(full_key, context)
     print(f"{full_key} = {value}")
 
@@ -48,15 +48,15 @@ def interpolate_vars_in_string(text: str, context: dict) -> str:
             raise ValueError(f"$Var.{var_name} not found in context for interpolation.")
         return str(context[var_name])
 
-    return re.sub(r"\$Var\.([a-zA-Z_]\w*)", replacer, text)
+    return re.sub(r"(\$Var\.([a-zA-Z_]\w*))", replacer, text)
 
-@given(parsers.re(r'I save (?P<value>.+?) as \$Var\.(?P<var_key>\w+) variable'))
-@when(parsers.re(r'I save (?P<value>.+?) as \$Var\.(?P<var_key>\w+) variable'))
-@then(parsers.re(r'I save (?P<value>.+?) as \$Var\.(?P<var_key>\w+) variable'))
+@given(parsers.re(r'I save (?P<value>.+?) as (?P<var_key>\$Var\.\w+) variable'))
+@when(parsers.re(r'I save (?P<value>.+?) as (?P<var_key>\$Var\.\w+) variable'))
+@then(parsers.re(r'I save (?P<value>.+?) as (?P<var_key>\$Var\.\w+) variable'))
 def save_var_value(value, var_key, context):
     value = interpolate_vars_in_string(value, context)
     context[var_key] = value
-    print(f'Saved $Var.{var_key} = {value}')
+    print(f'Saved {var_key} = {value}')
 
 @given(parsers.re(r'I say "(?P<text>.+)"'))
 def say_step(text, context):

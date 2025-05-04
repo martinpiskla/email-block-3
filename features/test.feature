@@ -16,10 +16,9 @@ Feature: Send an email via Gmail
   adds attachment, sends an email and logs out
 
     Given I open Gmail page
-    When I execute login
+    #When I execute login
     When I execute login with:
-      | Username | usernametest |
-      #| Username | $Env.EMAIL_USERNAME |
+      | Username | $Env.EMAIL_USERNAME |
     And I click on Next button
     Then I am on Inbox page
 

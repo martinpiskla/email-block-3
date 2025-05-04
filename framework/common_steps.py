@@ -77,10 +77,21 @@ def execute_action_by_name(action_name, page_object):
     return method()
 
 @when(parsers.re(r'I execute (?P<action_name>\w+) with:$'))
-def execute_action_by_name(action_name, page_object, context):
+def execute_action_by_name_with_datatable(action_name, page_object, datatable):
     method = find_action_method(page_object, action_name)
-    data = context.table[0]
-    print(data)
     if not method:
         raise Exception(f"No method found with @Action('{action_name}') on {type(page_object).__name__}")
-    return method(data)
+
+    # Convert list of lists to a dict
+    try:
+        data = dict(datatable)
+    except Exception as e:
+        raise ValueError(f"Failed to convert datatable to dict: {e}\nActual datatable: {datatable}")
+
+    # Resolve dynamic variables
+    resolved_data = {
+        key: resolve_dynamic_variable(value, context={}) if isinstance(value, str) and value.startswith("$") else value
+        for key, value in data.items()
+    }
+
+    return method(resolved_data)

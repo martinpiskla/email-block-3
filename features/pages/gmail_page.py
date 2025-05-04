@@ -27,6 +27,6 @@ class GmailPage(BasePage):
         self.next_button.wait_for(timeout=10000)
 
     @Action("login")
-    def login(self):
-        self.email_input.fill("username")
+    def login(self, data: dict):
+        self.email_input.fill(data["Username"])
         self.next_button.click()

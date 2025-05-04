@@ -1,24 +1,15 @@
 # framework/common_steps.py
+from charset_normalizer.md import annotations
 from pytest_bdd import given, when, then, parsers
 import re
+from features.support.context import context
+from features.pages.gmail_page import GmailPage
+from pages.page_factory import PageFactory
+from framework.variable_resolver import resolve_dynamic_variable
+from typing import List
 
-from framework.env_loader import get_env_variable
-from framework.config_loader import get_config_value
+from utils.annotations import find_action_method
 
-
-def resolve_dynamic_variable(full_key: str, context: dict) -> str:
-    """Resolves $Env.XXX, $Config.XXX, or $Var.XXX variables."""
-    if full_key.startswith("$Env."):
-        return get_env_variable(full_key[5:])
-    elif full_key.startswith("$Config."):
-        return get_config_value(full_key[8:])
-    elif full_key.startswith("$Var."):
-        key = full_key[5:]
-        if key not in context:
-            raise ValueError(f"$Var.{key} not found in context.")
-        return context[key]
-    else:
-        raise ValueError(f"Unknown variable source: {full_key}")
 
 @given(parsers.re(r"I print (?P<var_type>\$Env|\$Config|\$Var)(?P<key>\.\w+) variable content"))
 @when(parsers.re(r"I print (?P<var_type>\$Env|\$Config|\$Var)(?P<key>\.\w+) variable content"))
@@ -68,3 +59,28 @@ def say_step_unquoted(text, context):
     message = interpolate_vars_in_string(text, context)
     print(f"Message: {message}")
 
+@given(parsers.re(r'I open (?P<page_name>.+) page'))
+def open_page(page_name, browser_context):
+    page = browser_context.new_page()
+    page_object = PageFactory.get_page(page_name, page)
+
+    context["current_page"] = page_object  # <-- store PO globally
+
+    page.goto(page_object.url)
+    page_object.wait_for_page_to_load()
+
+@when(parsers.re(r'I execute (?P<action_name>\w+)$'))
+def execute_action_by_name(action_name, page_object):
+    method = find_action_method(page_object, action_name)
+    if not method:
+        raise Exception(f"No method found with @Action('{action_name}') on {type(page_object).__name__}")
+    return method()
+
+@when(parsers.re(r'I execute (?P<action_name>\w+) with:$'))
+def execute_action_by_name(action_name, page_object, context):
+    method = find_action_method(page_object, action_name)
+    data = context.table[0]
+    print(data)
+    if not method:
+        raise Exception(f"No method found with @Action('{action_name}') on {type(page_object).__name__}")
+    return method(data)

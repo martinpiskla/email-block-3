@@ -1,9 +1,8 @@
 from playwright.sync_api import sync_playwright
 import pytest
+from playwright.sync_api import sync_playwright
 
-@pytest.fixture
-def context():
-    return {}
+from features.support.context import context
 
 pytest_plugins = [
     "framework.common_steps",
@@ -32,3 +31,27 @@ def pytest_runtest_makereport(item, call):
             page.screenshot(path=screenshot_path)
             with open(screenshot_path, "rb") as f:
                 allure.attach(f.read(), name="Failed Screenshot", attachment_type=allure.attachment_type.PNG)
+
+
+@pytest.fixture(scope="session")
+def playwright_instance():
+    with sync_playwright() as playwright:
+        yield playwright
+
+
+@pytest.fixture(scope="session")
+def browser(playwright_instance):
+    browser = playwright_instance.chromium.launch(headless=False)
+    yield browser
+    browser.close()
+
+@pytest.fixture
+def browser_context(browser):
+    context = browser.new_context()
+    yield context
+    context.close()
+
+@pytest.fixture
+def page_object():
+    return context["current_page"]
+

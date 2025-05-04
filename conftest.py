@@ -3,6 +3,7 @@ import pytest
 from playwright.sync_api import sync_playwright
 
 from features.support.context import context
+from pages.page_factory import PageFactory
 
 pytest_plugins = [
     "framework.common_steps",
@@ -51,7 +52,6 @@ def browser_context(browser):
     yield context
     context.close()
 
-@pytest.fixture
 def page_object():
     return context["current_page"]
 

@@ -2,12 +2,13 @@
 
 from playwright._impl._locator import Locator
 from playwright.sync_api import Page as PWPage
+from pytest_playwright.pytest_playwright import context
 
-from conftest import browser_context
 from features.pages.base_page import BasePage
-from utils.annotations import FindBy, Url, Action
+from utils.annotations import FindBy, Url, Action, Name
 
 
+@Name("Inbox")
 @Url("https://mail.centrum.sk/")
 class InboxPage(BasePage):
     def __init__(self, page: PWPage):
@@ -18,8 +19,12 @@ class InboxPage(BasePage):
     def new_message_button(self) -> Locator:
         pass
 
-    @FindBy(xpath='//span[contains(text(),"Ďalej")]/ancestor::button')
-    def next_button(self) -> Locator:
+    @FindBy(xpath='//form[@id="mail_composer_frm"]')
+    def mail_composer_form_element(self) -> Locator:
+        pass
+
+    @FindBy(xpath='//input[@id="recipient_rightclick_to"]')
+    def to_recipients_element(self) -> Locator:
         pass
 
     def wait_for_page_to_load(self):
@@ -29,5 +34,5 @@ class InboxPage(BasePage):
 
     @Action("login")
     def login(self, data: dict):
-        self.email_input.fill(data["Username"])
-        self.next_button.click()
+        pass
+

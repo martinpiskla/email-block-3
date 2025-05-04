@@ -43,14 +43,16 @@ def open_page(page_name, browser_context):
     page_object.wait_for_page_to_load()
 
 @when(parsers.re(r'I execute (?P<action_name>\w+)$'))
-def execute_action_by_name(action_name, page_object):
+def execute_action_by_name(action_name):
+    page_object = context["current_page"]
     method = find_action_method(page_object, action_name)
     if not method:
         raise Exception(f"No method found with @Action('{action_name}') on {type(page_object).__name__}")
     return method()
 
 @when(parsers.re(r'I execute (?P<action_name>\w+) with:$'))
-def execute_action_by_name_with_datatable(action_name, page_object, datatable):
+def execute_action_by_name_with_datatable(action_name, datatable):
+    page_object = context["current_page"]
     method = find_action_method(page_object, action_name)
     if not method:
         raise Exception(f"No method found with @Action('{action_name}') on {type(page_object).__name__}")
@@ -69,8 +71,9 @@ def execute_action_by_name_with_datatable(action_name, page_object, datatable):
 
     return method(resolved_data)
 
-@when(parsers.re(r'I click on (?P<element_name>.*) (?P<element_type>button|element|link)'))
-def click_on_element(element_name, element_type, page_object):
+@when(parsers.re(r'I click on (?P<element_name>.*) (?P<element_type>button|element|link|field)'))
+def click_on_element(element_name, element_type):
+    page_object = context["current_page"]
     # Replace spaces with underscores and construct the attribute name dynamically
     attribute_name = f"{element_name.lower().replace(' ', '_')}_{element_type.lower()}"
 
@@ -86,13 +89,29 @@ def click_on_element(element_name, element_type, page_object):
 @then(parsers.re(r'I am on (?P<page_name>.+) page'))
 def landed_on_page(page_name, browser_context):
     # Retrieve the current page from the context
-    current_page = context.get("current_page").page
-
+    page = browser_context.pages[-1]
     # Get the page object for the specified page name
-    page_object = PageFactory.get_page(page_name, current_page)
-
+    page_object = PageFactory.get_page(page_name, page)
     # Update the current page in the context
     context["current_page"] = page_object
 
     # Wait for the page to load
     page_object.wait_for_page_to_load()
+
+@then(parsers.re(r'(?P<element_name>.*) (?P<element_type>button|element|link|field) is visible'))
+def element_is_visible(element_name, element_type):
+    page_object = context["current_page"]
+    # Build the attribute name dynamically (e.g., "submit_button")
+    attribute_name = f"{element_name.lower().replace(' ', '_')}_{element_type.lower()}"
+
+    # Get the element
+    element = getattr(page_object, attribute_name, None)
+
+    element.wait_for(timeout=30000)
+
+    if not element:
+        raise AttributeError(f"Element '{attribute_name}' not found on {type(page_object).__name__}")
+
+    # Check visibility
+    if not element.is_visible():
+        raise AssertionError(f"Element '{attribute_name}' is not visible on {type(page_object).__name__}")

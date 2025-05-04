@@ -22,3 +22,6 @@ class BasePage:
         if not action:
             raise Exception(f"Action '{action_name}' not registered.")
         return action(self, data)
+
+    def wait_for_page_to_load(self):
+        pass

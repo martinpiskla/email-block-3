@@ -5,8 +5,10 @@ from playwright._impl._locator import Locator
 from playwright.sync_api import Page as PWPage
 
 from features.pages.base_page import BasePage
-from utils.annotations import FindBy, Url, Action
+from utils.annotations import FindBy, Url, Action, Name
 
+
+@Name("Email")
 @Url("$Env.EMAIL_URL")
 class EmailPage(BasePage):
     def __init__(self, page: PWPage):

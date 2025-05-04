@@ -48,3 +48,9 @@ def find_action_method(page_obj, action_name: str):
         if callable(method) and getattr(method, "_action_name", None) == action_name.lower():
             return method
     return None
+
+def Name(name: str):
+    def decorator(cls):
+        cls._page_name = name.lower()  # Safe, and searchable
+        return cls
+    return decorator

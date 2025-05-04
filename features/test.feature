@@ -16,16 +16,14 @@ Feature: Send an email via Gmail
   adds attachment, sends an email and logs out
 
     Given I open Email page
-    #When I execute login
     When I execute login with:
       | Username | $Env.EMAIL_USERNAME |
       | Password | $Env.EMAIL_PASSWORD |
     Then I am on Inbox page
 
     When I click on New Message button
-    Then I am on New Email page
-
-    When I click on select contacts button
+    Then To Recipients element is visible
+    When I click on Select Contacts button
     Then I am on Select Contacts page
 
     When I execute select and insert contacts with:

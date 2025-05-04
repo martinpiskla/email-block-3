@@ -5,6 +5,8 @@ from features.support.context import context
 from pages.page_factory import PageFactory
 from framework.variable_resolver import resolve_dynamic_variable
 from utils.annotations import find_action_method
+from utils.file_utils import read_attachment
+
 
 @given(parsers.re(r"I print (?P<var_type>\$Env|\$Config|\$Var)(?P<key>\.\w+) variable content"))
 @when(parsers.re(r"I print (?P<var_type>\$Env|\$Config|\$Var)(?P<key>\.\w+) variable content"))
@@ -50,14 +52,14 @@ def execute_action_by_name(action_name):
         raise Exception(f"No method found with @Action('{action_name}') on {type(page_object).__name__}")
     return method()
 
-@when(parsers.re(r'I execute (?P<action_name>\w+) with:$'))
+@when(parsers.re(r'I execute (?P<action_name>.+?) with:$'))
 def execute_action_by_name_with_datatable(action_name, datatable):
     page_object = context["current_page"]
     method = find_action_method(page_object, action_name)
     if not method:
         raise Exception(f"No method found with @Action('{action_name}') on {type(page_object).__name__}")
 
-    # Convert list of lists to a dict
+    # Convert list of lists to dict
     try:
         data = dict(datatable)
     except Exception as e:

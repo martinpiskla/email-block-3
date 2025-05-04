@@ -37,8 +37,15 @@ class EmailPage(BasePage):
 
     def wait_for_page_to_load(self):
         self.login_button.wait_for(timeout=10000)
-        self.accept_cookies_button.wait_for(timeout=10000)
-        self.accept_cookies_button.click()
+
+        try:
+            # Attempt to wait briefly for the accept cookies button
+            self.accept_cookies_button.wait_for(timeout=10000)
+            if self.accept_cookies_button.is_visible():
+                self.accept_cookies_button.click()
+        except Exception:
+            # If not visible or timeout occurs, just continue
+            pass
 
     @Action("login")
     def login(self, data: dict):

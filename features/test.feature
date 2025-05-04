@@ -23,23 +23,17 @@ Feature: Send an email via Gmail
 
     When I click on New Message button
     Then To Recipients element is visible
+
     When I click on Select Contacts button
-    Then I am on Select Contacts page
+    Then Saved Contact element is visible
 
-    When I execute select and insert contacts with:
-      | Contacts | $Env.EMAIL_ADDRESS |
-    Then I am on New Email page
+    When I click on Saved Contact element
+    Then saved contact in to recipients element is visible
 
-    When I execute validate recipients with:
-      | To  | $Env.EMAIL_ADDRESS |
-      | Cc  |                    |
-      | Bcc |                    |
-    And I execute write email with:
-      | Subject | testEmailSubject.txt |
-      | Body    | testEmailBody.txt    |
-    And I click on Send email button
-    Then I am on Inbox page
-
-    When I execute validate message sent banner
-    And I execute logout from gmail
-    Then I am on Gmail Login page
+    When I execute write email and add attachment with:
+      | Subject    | testEmailSubject.txt |
+      | Attachment | attachment.txt       |
+    When I click on Send Email button
+    #add validation email is in sent folder
+    And I click on Logout button
+    Then I am on Email page

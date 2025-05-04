@@ -1,0 +1,46 @@
+# pages/email_page.py
+import time
+
+from playwright._impl._locator import Locator
+from playwright.sync_api import Page as PWPage
+
+from features.pages.base_page import BasePage
+from utils.annotations import FindBy, Url, Action
+
+@Url("$Env.EMAIL_URL")
+class EmailPage(BasePage):
+    def __init__(self, page: PWPage):
+        super().__init__(page)
+        self.page = page
+
+    @FindBy(xpath='//div[@class="MailBoxCentrum_aside-email-form__nxE3J"]/descendant::input[@name="userName"]')
+    def email_input(self) -> Locator:
+        pass
+
+    @FindBy(xpath='//div[@class="MailBoxCentrum_aside-email-form__nxE3J"]/descendant::input[@name="password"]')
+    def password_input(self) -> Locator:
+        pass
+
+    @FindBy(xpath='//div[@class="MailBoxCentrum_aside-email-form__nxE3J"]/descendant::button[@type="submit" and contains(text(),"Prihlásiť")]')
+    def login_button(self) -> Locator:
+        pass
+
+    @FindBy(xpath='//button[@id="onetrust-accept-btn-handler"]')
+    def accept_cookies_button(self) -> Locator:
+        pass
+
+    @FindBy(xpath='//aside/descendant::a[@href="https://mail.centrum.sk" and contains(text(),"pytestbdd@centrum.sk")]')
+    def access_inbox_button(self) -> Locator:
+        pass
+
+    def wait_for_page_to_load(self):
+        self.login_button.wait_for(timeout=10000)
+        self.accept_cookies_button.wait_for(timeout=10000)
+        self.accept_cookies_button.click()
+
+    @Action("login")
+    def login(self, data: dict):
+        self.email_input.fill(data["Username"])
+        self.password_input.fill(data["Password"])
+        self.login_button.click()
+        self.access_inbox_button.click()

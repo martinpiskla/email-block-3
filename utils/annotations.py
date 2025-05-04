@@ -2,25 +2,17 @@
 from framework.variable_resolver import resolve_dynamic_variable
 from playwright.sync_api import Locator
 
-def Name(name: str):
-    def decorator(cls):
-        cls.__name__ = name
-        return cls
-    return decorator
-
 def Url(url: str):
     def decorator(cls):
         # Try resolving if dynamic variable
         try:
-            context = {}  # You can later inject context here for $Var if needed
+            context = {}
             resolved_url = resolve_dynamic_variable(url, context)
         except Exception:
             resolved_url = url  # Use raw string if resolution fails
         cls.url = resolved_url
         return cls
     return decorator
-
-# framework/annotations.py
 
 def FindBy(**kwargs):
     def decorator(func):

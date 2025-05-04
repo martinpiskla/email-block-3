@@ -1,9 +1,11 @@
 # pages/page_factory.py
-from features.pages.gmail_page import GmailPage
+from features.pages.inbox_page import InboxPage
+from features.pages.email_page import EmailPage
 
 class PageFactory:
     page_map = {
-        "Gmail": GmailPage,
+        "Email": EmailPage,
+        "Inbox": InboxPage,
         # Add other mappings here
     }
 

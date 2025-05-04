@@ -15,14 +15,14 @@ Feature: Send an email via Gmail
   Scenario: 01. User logs into Gmail web application, creates an email, selects recipient from contact list,
   adds attachment, sends an email and logs out
 
-    Given I open Gmail page
+    Given I open Email page
     #When I execute login
     When I execute login with:
       | Username | $Env.EMAIL_USERNAME |
-    And I click on Next button
+      | Password | $Env.EMAIL_PASSWORD |
     Then I am on Inbox page
 
-    When I click on write new email button
+    When I click on New Message button
     Then I am on New Email page
 
     When I click on select contacts button

@@ -1,16 +1,18 @@
-# pages/email_page.py
+# pages/home_page.py
 import time
+from os import getenv
 
 from playwright._impl._locator import Locator
 from playwright.sync_api import Page as PWPage
 
 from features.pages.base_page import BasePage
+from framework.variable_resolver import resolve_dynamic_variable
 from utils.annotations import FindBy, Url, Action, Name
 
 
-@Name("Email")
+@Name("Home")
 @Url("$Env.EMAIL_URL")
-class EmailPage(BasePage):
+class HomePage(BasePage):
     def __init__(self, page: PWPage):
         super().__init__(page)
         self.page = page
@@ -31,7 +33,7 @@ class EmailPage(BasePage):
     def accept_cookies_button(self) -> Locator:
         pass
 
-    @FindBy(xpath='//aside/descendant::a[@href="https://mail.centrum.sk" and contains(text(),"pytestbdd@centrum.sk")]')
+    @FindBy(xpath=f'//aside/descendant::a[@href="https://mail.centrum.sk" and contains(text(),"{resolve_dynamic_variable("$Env.EMAIL_USERNAME", {})}")]')
     def access_inbox_button(self) -> Locator:
         pass
 

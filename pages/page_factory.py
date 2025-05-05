@@ -2,7 +2,7 @@
 import inspect
 import features.pages  # adjust this if your pages are under a different module
 from features.pages.base_page import BasePage
-from features.pages.email_page import EmailPage
+from features.pages.home_page import HomePage
 from features.pages.inbox_page import InboxPage
 
 def get_all_page_classes():

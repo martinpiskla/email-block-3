@@ -44,7 +44,8 @@ def open_page(page_name, browser_context):
     page.goto(page_object.url)
     page_object.wait_for_page_to_load()
 
-@when(parsers.re(r'I execute (?P<action_name>\w+)$'))
+@when(parsers.re(r'I execute (?P<action_name>.+)$'))
+@then(parsers.re(r'I execute (?P<action_name>.+)$'))
 def execute_action_by_name(action_name):
     page_object = context["current_page"]
     method = find_action_method(page_object, action_name)

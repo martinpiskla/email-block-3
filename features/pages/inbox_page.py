@@ -6,8 +6,10 @@ from playwright.sync_api import Page as PWPage
 from pytest_playwright.pytest_playwright import context
 
 from features.pages.base_page import BasePage
+from framework.variable_resolver import resolve_dynamic_variable
 from utils.annotations import FindBy, Url, Action, Name
-from utils.file_utils import read_attachment, read_file_path
+from utils.file_utils import read_attachment, read_file_path, write_to_file
+from utils.time_utils import get_current_timestamp
 
 
 @Name("Inbox")
@@ -33,11 +35,11 @@ class InboxPage(BasePage):
     def select_contacts_button(self) -> Locator:
         pass
 
-    @FindBy(xpath='//span[contains(text()," Martin Piskla ")]')
+    @FindBy(xpath=f'//span[contains(text()," {resolve_dynamic_variable("$Env.CONTACT_FULLNAME", {})} ")]')
     def saved_contact_element(self) -> Locator:
         pass
 
-    @FindBy(xpath='//div[@class="recipient-address recipient-block" and contains(text(),"Martin Piskla")]')
+    @FindBy(xpath=f'//div[@class="recipient-address recipient-block" and contains(text(),"{resolve_dynamic_variable("$Env.CONTACT_FULLNAME", {})}")]')
     def saved_contact_in_to_recipients_element(self) -> Locator:
         pass
 
@@ -61,6 +63,10 @@ class InboxPage(BasePage):
     def logout_button(self) -> Locator:
         pass
 
+    @FindBy(xpath='//a[@id="fld_1_line"]/span[contains(text(),"Odoslaná")]')
+    def sent_folder_element(self) -> Locator:
+        pass
+
     def wait_for_page_to_load(self):
         print("InboxPage loaded")
         self.new_message_button.wait_for(timeout=30000)
@@ -68,11 +74,14 @@ class InboxPage(BasePage):
 
     @Action("write email and add attachment")
     def write_email(self, data: dict):
+        write_to_file(data.get("Subject", ""), get_current_timestamp())
         subject_text = read_attachment(data.get("Subject", ""))
         self.input_field.fill(subject_text)
         self.input_attachment.set_input_files(read_file_path(data["Attachment"]))
 
-    @Action("logout")
-    def logout(self):
-        time.sleep(10000)
 
+    @Action("validate email is in sent folder")
+    def validate_email_was_sent(self):
+        self.sent_folder_element.click()
+        sent_email_subject = self.page.locator(f'//div[contains(text(),"{read_attachment("testEmailSubject.txt")}")]')
+        assert sent_email_subject.is_visible(), "Email was not sent successfully"

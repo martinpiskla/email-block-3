@@ -15,7 +15,7 @@ Feature: Send an email via Gmail
   Scenario: 01. User logs into Gmail web application, creates an email, selects recipient from contact list,
   adds attachment, sends an email and logs out
 
-    Given I open Email page
+    Given I open Home page
     When I execute login with:
       | Username | $Env.EMAIL_USERNAME |
       | Password | $Env.EMAIL_PASSWORD |
@@ -34,6 +34,7 @@ Feature: Send an email via Gmail
       | Subject    | testEmailSubject.txt |
       | Attachment | attachment.txt       |
     When I click on Send Email button
-    #add validation email is in sent folder
-    And I click on Logout button
-    Then I am on Email page
+    Then I execute validate email is in sent folder
+
+    When I click on Logout button
+    Then I am on Home page

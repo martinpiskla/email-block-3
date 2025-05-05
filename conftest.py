@@ -1,12 +1,11 @@
-from playwright.sync_api import sync_playwright
 import pytest
 from playwright.sync_api import sync_playwright
 
 from features.support.context import context
-from pages.page_factory import PageFactory
 
 pytest_plugins = [
     "framework.common_steps",
+    "framework.ui_steps",
 ]
 
 # Playwright browser fixture

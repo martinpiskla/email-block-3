@@ -7,9 +7,9 @@ from pytest_playwright.pytest_playwright import context
 
 from features.pages.base_page import BasePage
 from framework.variable_resolver import resolve_dynamic_variable
-from utils.annotations import FindBy, Url, Action, Name
-from utils.file_utils import read_attachment, read_file_path, write_to_file
-from utils.time_utils import get_current_timestamp
+from framework.utils.annotations import FindBy, Url, Action, Name
+from framework.utils.file_utils import read_attachment, read_file_path, write_to_file
+from framework.utils.time_utils import get_current_timestamp
 
 
 @Name("Inbox")

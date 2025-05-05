@@ -7,7 +7,7 @@ from playwright.sync_api import Page as PWPage
 
 from features.pages.base_page import BasePage
 from framework.variable_resolver import resolve_dynamic_variable
-from utils.annotations import FindBy, Url, Action, Name
+from framework.utils.annotations import FindBy, Url, Action, Name
 
 
 @Name("Home")

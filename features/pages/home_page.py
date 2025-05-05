@@ -41,12 +41,12 @@ class HomePage(BasePage):
         self.login_button.wait_for(timeout=10000)
 
         try:
-            # Attempt to wait briefly for the accept cookies button
+            # Attempt to wait for the accept cookies button
             self.accept_cookies_button.wait_for(timeout=10000)
             if self.accept_cookies_button.is_visible():
                 self.accept_cookies_button.click()
         except Exception:
-            # If not visible or timeout occurs, just continue
+            # If not visible or timeout occurs, just continue, no need to accept cookies
             pass
 
     @Action("login")
@@ -54,4 +54,5 @@ class HomePage(BasePage):
         self.email_input.fill(data["Username"])
         self.password_input.fill(data["Password"])
         self.login_button.click()
+        self.access_inbox_button.wait_for(timeout=10000)
         self.access_inbox_button.click()

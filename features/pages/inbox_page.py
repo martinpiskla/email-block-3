@@ -78,10 +78,13 @@ class InboxPage(BasePage):
         subject_text = read_attachment(data.get("Subject", ""))
         self.input_field.fill(subject_text)
         self.input_attachment.set_input_files(read_file_path(data["Attachment"]))
+        time.sleep(5) #for visual check
 
 
     @Action("validate email is in sent folder")
     def validate_email_was_sent(self):
         self.sent_folder_element.click()
         sent_email_subject = self.page.locator(f'//div[contains(text(),"{read_attachment("testEmailSubject.txt")}")]')
+        sent_email_subject.wait_for(timeout=10000)
+        time.sleep(5) #for visual check
         assert sent_email_subject.is_visible(), "Email was not sent successfully"

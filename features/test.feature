@@ -1,17 +1,7 @@
 @test-feature
 Feature: Send an email via Gmail
 
-#  @test-01
-#  Scenario: first test
-#    Given I go to the login page
-#    When I fill in login details
-#    And I print $Env.USERNAME variable content
-#    Then I am logged in
-#    And I print $Config.API_KEY variable content
-#    And I save John as $Var.username variable
-#    And I say Hello $Var.username
-
-  @test-02
+  @test-01
   Scenario: 01. User logs into Gmail web application, creates an email, selects recipient from contact list,
   adds attachment, sends an email and logs out
 

@@ -1,8 +1,8 @@
 @test-feature
-Feature: Send an email via Gmail
+Feature: Send an email via Centrum
 
   @test-01
-  Scenario: 01. User logs into Gmail web application, creates an email, selects recipient from contact list,
+  Scenario: 01. User logs into Centrum web application, creates an email, selects recipient from contact list,
   adds attachment, sends an email and logs out
 
     Given I open Home page
